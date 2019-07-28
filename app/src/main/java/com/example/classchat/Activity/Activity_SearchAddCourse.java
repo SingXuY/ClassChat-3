@@ -2,8 +2,10 @@ package com.example.classchat.Activity;
 
 //自动添加课程页面
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import com.example.classchat.Object.MySubject;
 import com.example.classchat.R;
 import com.example.classchat.Util.SharedUtil;
 import com.example.classchat.Util.Util_Net;
+import com.example.library_cache.Cache;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +60,9 @@ public class Activity_SearchAddCourse extends AppCompatActivity {
     private AlertDialog.Builder builder3;
     //周数数组
     List<Integer> weeksnum=new ArrayList<>();
+
+    //缓存
+    private String mClassBoxData;
 
 
     @Override
@@ -211,12 +217,12 @@ public class Activity_SearchAddCourse extends AppCompatActivity {
         //点击添加课程
         add.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String room_=room.getText().toString();
-                int dayOfWeek_;
-                int start_;
+            public void onClick(final View v) {
+                final String room_=room.getText().toString();
+                final int dayOfWeek_;
+                final int start_;
                 int end_;
-                int step;
+                final int step;
                 if(TextUtils.isEmpty(room.getText())||TextUtils.isEmpty(dayOfWeek.getText())|| TextUtils.isEmpty(start.getText())||TextUtils.isEmpty(end.getText())||weeksnum.size()==0)
                 {builder1.show();}
                 else{
@@ -227,7 +233,8 @@ public class Activity_SearchAddCourse extends AppCompatActivity {
                     if(end_<start_) {builder2.show();}
                     else if(dayOfWeek_<1||dayOfWeek_>7){builder3.show();}
                     else {
-                        MySubject item=new MySubject( course_name, room_, teacher_name, weeksnum, start_, step, dayOfWeek_,id);
+                        final MySubject item=new MySubject( course_name, room_, teacher_name, weeksnum, start_, step, dayOfWeek_,id,0);
+
 
                         RequestBody requestBody = new FormBody.Builder()
                                 .add("id","这应该有一个从MainActivity传来的StudentId")
@@ -244,6 +251,21 @@ public class Activity_SearchAddCourse extends AppCompatActivity {
                             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                                 boolean responseData = Boolean.parseBoolean(response.body().string());
                                 if (responseData) {
+
+                                    mClassBoxData= Cache.with(v.getContext())
+                                            .path(getCacheDir(v.getContext()))
+                                            .getCache("classBox", String.class);
+
+                                    List<MySubject> mySubjects = JSON.parseArray(mClassBoxData, MySubject.class);
+
+                                    mySubjects.add(item);
+
+                                    mClassBoxData=mySubjects.toString();
+
+                                    Cache.with(v.getContext())
+                                            .path(getCacheDir(v.getContext()))
+                                            .saveCache("classBox", mClassBoxData);
+
                                     Intent intent = new Intent();
                                     intent.setClass(Activity_SearchAddCourse.this,MainActivity.class);
                                     startActivity(intent);
@@ -255,5 +277,18 @@ public class Activity_SearchAddCourse extends AppCompatActivity {
                 }
             }
         });
+    }
+    /*
+     * 获得缓存地址
+     * */
+    public String getCacheDir(Context context) {
+        String cachePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
+        }
+        return cachePath;
     }
 }

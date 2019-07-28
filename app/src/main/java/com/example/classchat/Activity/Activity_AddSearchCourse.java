@@ -5,26 +5,25 @@ package com.example.classchat.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.content.Intent;
 import android.widget.Button;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.classchat.Adapter.Adapter_SearchCourseListView;
+import com.example.classchat.R;
 import com.example.classchat.Util.SharedUtil;
 import com.example.classchat.Util.Util_Net;
 import com.example.classchat.model.AddCourseDataBase;
-import com.example.classchat.R;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -32,7 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -127,11 +127,11 @@ public class Activity_AddSearchCourse extends AppCompatActivity {
                 //todo s.toString()为输入的关键字，这里需要写把关键字发给数据库和返回一个包含(id，课程名，老师，专业)
                 // （固定顺序）的二维string数组的函数，数组给hoolder赋值；
                 final RequestBody requestBody = new FormBody.Builder()
-                        .add("info", "这里的信息时从MainActivity传来的学院和大学")
-                        .add("key", s.toString())
+                        .add("tablename", "SCUT_CS")
+                        .add("condition", s.toString())
                         .build();
 
-                Util_Net.sendOKHTTPRequest("", requestBody, new Callback() {
+                Util_Net.sendOKHTTPRequest("http://106.12.105.160:8082/searchcourse", requestBody, new Callback() {
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
@@ -142,7 +142,7 @@ public class Activity_AddSearchCourse extends AppCompatActivity {
 
                         String responsedata = response.body().string();
 
-                        List<AddCourseDataBase> items = new ArrayList<AddCourseDataBase>();
+
 
                         try {
                             JSONArray jsonArray = new JSONArray(responsedata);
@@ -154,6 +154,8 @@ public class Activity_AddSearchCourse extends AppCompatActivity {
                             Message message = new Message();
                             message.what = GET;
                             handler.sendMessage(message);
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

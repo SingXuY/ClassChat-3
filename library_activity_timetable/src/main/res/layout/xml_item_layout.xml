@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="2dp"
-            android:textColor="@color/theme_black"
+            android:textColor="#BB000000"
             android:textSize="12sp"
             android:background="@drawable/xml_decoration_line" />
 
@@ -23,14 +23,14 @@
 
     <!-- 右上角提示圆点 -->
     <TextView
-        android:id="@+id/id_course_item_count"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:id="@+id/id_course_messagecount"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_gravity="right|top"
         android:background="@drawable/xml_pinkpoint_round"
         android:gravity="center"
-        android:textColor="@color/app_white"
-        android:textSize="12sp"
+        android:textColor="#BBFFFFFF"
+        android:textSize="13sp"
         android:visibility="gone" />
 
 </FrameLayout>

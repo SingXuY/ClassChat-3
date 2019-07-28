@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:id="@+id/id_root"
-    android:background="@color/app_white"
+    android:background="#BBFFFFFF"
     android:orientation="horizontal">
 
     <LinearLayout

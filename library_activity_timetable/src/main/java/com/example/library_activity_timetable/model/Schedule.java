@@ -13,41 +13,42 @@ import java.util.Map;
  */
 public class Schedule implements Serializable, Comparable<Schedule> {
 
+	private int messagecount=0;
 
 
 	//id
-	private String id;
+	private String id="";
 
 	/**
 	 * 课程名
 	 */
 	private String name="";
-	
+
 	/**
 	 * 教室
 	 */
 	private String room="";
-	
+
 	/**
 	 * 教师
 	 */
 	private String teacher="";
-	
+
 	/**
 	 * 第几周至第几周上
 	 */
 	private List<Integer> weekList=new ArrayList<>();
-	
+
 	/**
 	 * 开始上课的节次
 	 */
 	private int start=0;
-	
+
 	/**
 	 * 上课节数
 	 */
 	private int step=0;
-	
+
 	/**
 	 * 周几上
 	 */
@@ -57,8 +58,8 @@ public class Schedule implements Serializable, Comparable<Schedule> {
 	 * 额外信息
 	 */
 	private Map<String, Object> extras=new HashMap<>();
-	
-	public Schedule(String name, String room, String teacher,List<Integer> weekList, int start, int step, int day,String id) {
+
+	public Schedule(String name, String room, String teacher,List<Integer> weekList, int start, int step, int day,String id,int messagecount) {
 		super();
 		this.name = name;
 		this.room = room;
@@ -68,6 +69,7 @@ public class Schedule implements Serializable, Comparable<Schedule> {
 		this.step = step;
 		this.day = day;
 		this.id=id;
+		this.messagecount=messagecount;
 	}
 
 	public Map<String, Object> getExtras(){
@@ -109,7 +111,7 @@ public class Schedule implements Serializable, Comparable<Schedule> {
 	public void setWeekList(List<Integer> weekList) {
 		this.weekList = weekList;
 	}
-	
+
 	public List<Integer> getWeekList() {
 		return weekList;
 	}
@@ -159,5 +161,13 @@ public class Schedule implements Serializable, Comparable<Schedule> {
 		}else{
 			return 1;
 		}
+	}
+
+	public int getMessagecount() {
+		return messagecount;
+	}
+
+	public void setMessagecount(int messagecount) {
+		this.messagecount = messagecount;
 	}
 }

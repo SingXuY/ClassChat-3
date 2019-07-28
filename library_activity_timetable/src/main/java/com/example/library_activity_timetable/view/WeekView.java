@@ -207,7 +207,7 @@ public class WeekView extends LinearLayout implements WeekViewEnable<WeekView> {
                 public void onClick(View view) {
                     resetBackground();
                     preIndex=tmp;
-                    perLayout.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.weekview_white));
+                    //perLayout.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.weekview_white));
                     onWeekItemClickedListener().onWeekClicked(tmp);
                 }
             });

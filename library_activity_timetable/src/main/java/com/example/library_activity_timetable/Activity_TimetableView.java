@@ -130,15 +130,9 @@ public class Activity_TimetableView extends LinearLayout {
         return isShowWeekends;
     }
 
-    public AbsOperater operater(){
-        if(operater==null) operater=new SimpleOperater();
+    public AbsOperater operater() {
+        if (operater == null) operater = new SimpleOperater();
         return operater;
-    }
-
-    public Activity_TimetableView operater(AbsOperater operater) {
-        operater.init(context,attrs,this);
-        this.operater = operater;
-        return this;
     }
 
     /**
@@ -153,17 +147,6 @@ public class Activity_TimetableView extends LinearLayout {
     }
 
     /**
-     * 设置侧边栏宽度px
-     *
-     * @param monthWidthPx
-     * @return
-     */
-    public Activity_TimetableView monthWidthPx(int monthWidthPx) {
-        this.monthWidth = monthWidthPx;
-        return this;
-    }
-
-    /**
      * 获取侧边栏宽度px
      *
      * @return
@@ -173,43 +156,12 @@ public class Activity_TimetableView extends LinearLayout {
     }
 
     /**
-     * 课程项文本颜色
-     *
-     * @param color      颜色
-     * @param isThisWeek 是否本周，true：设置当前周文本颜色，false：设置非本周文本颜色
-     * @return
-     */
-    public Activity_TimetableView itemTextColor(int color, boolean isThisWeek) {
-        if (isThisWeek) itemTextColorWithThisWeek = color;
-        else itemTextColorWithNotThis = color;
-        return this;
-    }
-
-    /**
      * 获取本周课程项文本颜色
      *
      * @return
      */
     public int itemTextColorWithThisWeek() {
         return itemTextColorWithThisWeek;
-    }
-
-    /**
-     * 获取非本周课程项文本颜色
-     *
-     * @return
-     */
-    public int itemTextColorWithNotThis() {
-        return itemTextColorWithNotThis;
-    }
-
-    /**
-     * 获取课程项透明度
-     *
-     * @return
-     */
-    public float itemAlpha() {
-        return itemAlpha;
     }
 
     /**
@@ -629,29 +581,6 @@ public class Activity_TimetableView extends LinearLayout {
     }
 
     /**
-     * 设置本周课程的弧度
-     *
-     * @param thisWeekCorner 弧度
-     * @return
-     */
-    public Activity_TimetableView thisWeekCorner(int thisWeekCorner) {
-        this.thisWeekCorner = thisWeekCorner;
-        return this;
-    }
-
-    /**
-     * 设置本周、非本周相同的弧度
-     *
-     * @param cornerValue 弧度
-     * @return
-     */
-    public Activity_TimetableView cornerAll(int cornerValue) {
-        corner(cornerValue, true);
-        corner(cornerValue, false);
-        return this;
-    }
-
-    /**
      * 课程角度设置
      *
      * @param corner     角度px
@@ -693,27 +622,6 @@ public class Activity_TimetableView extends LinearLayout {
      */
     public boolean isShowNotCurWeek() {
         return isShowNotCurWeek;
-    }
-
-    /**
-     * 获取颜色池
-     *
-     * @return ScheduleColorPool
-     * @see ScheduleColorPool
-     */
-    public ScheduleColorPool colorPool() {
-        if (colorPool == null) colorPool = new ScheduleColorPool(context);
-        return colorPool;
-    }
-
-    /**
-     * dp->px
-     *
-     * @param dp
-     * @return
-     */
-    public int dp2px(int dp) {
-        return context.getResources().getDimensionPixelSize(dp);
     }
 
     /**

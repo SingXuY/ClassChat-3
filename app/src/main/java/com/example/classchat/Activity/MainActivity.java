@@ -1,11 +1,8 @@
 package com.example.classchat.Activity;
 
-import android.animation.Animator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -14,8 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.classchat.Fragment.Fragment_ClassBox;
 import com.example.classchat.Fragment.Fragment_Forum;
@@ -23,16 +18,11 @@ import com.example.classchat.Fragment.Fragment_SelfInformationCenter;
 import com.example.classchat.Fragment.Fragment_Shopping;
 import com.example.classchat.R;
 import com.example.classchat.Util.SharedUtil;
-import com.example.classchat.Util.ThemeUIUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-
-
-
 
     //    private Toolbar mToolbar;
     private BottomNavigationView mBottomNavigationView;
@@ -40,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
 
     List<Fragment> mFragments;
     AlertDialog builder=null;
+
+    private String correctId;//接收ID所用的变量
+    private int isAuthentation;
 
 
     @Override
@@ -69,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         if(SharedUtil.getShartData(this,"name").equals("0")){
             SharedUtil.setShartData(this,"day");
         }
@@ -92,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 //        mToolbar = findViewById(R.id.toolbar);
 //
 //    }
-
 
     public void initData() {
 //        setSupportActionBar(mToolbar);
@@ -133,11 +126,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     private void setFragmentPosition(int position) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         Fragment currentFragment = mFragments.get(position);
@@ -150,6 +138,14 @@ public class MainActivity extends AppCompatActivity {
         }
         ft.show(currentFragment);
         ft.commitAllowingStateLoss();
+    }
+
+    public String getId(){
+        return correctId;
+    }
+
+    public int  getIsAuthentation(){
+        return isAuthentation;
     }
 
 

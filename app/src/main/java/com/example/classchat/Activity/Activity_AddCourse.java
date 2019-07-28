@@ -2,6 +2,9 @@ package com.example.classchat.Activity;
 
 //手动添加课程页面
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,7 +28,7 @@ import com.example.classchat.Object.MySubject;
 import com.example.classchat.R;
 import com.example.classchat.Util.SharedUtil;
 import com.example.classchat.Util.Util_BlockchainTool;
-import com.example.classchat.Util.Util_Net;
+import com.example.library_cache.Cache;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +51,11 @@ public class Activity_AddCourse extends AppCompatActivity {
     private TextView choose_week;
     private Button add;
     private Button back;
+
+    private View view;
+
+    //缓存
+    private String mClassBoxData = "";
 
     //提示框builder
     private AlertDialog.Builder builder1;
@@ -88,10 +96,6 @@ public class Activity_AddCourse extends AppCompatActivity {
         end=(EditText)findViewById(R.id.get_course_end);
         back=(Button)findViewById(R.id.back_from_addCourse_button);
         choose_week=(TextView)findViewById(R.id.choose_week);
-
-
-
-
 
         //周数多选框
         mutilChoicebuilder = new AlertDialog.Builder(this);
@@ -220,6 +224,7 @@ public class Activity_AddCourse extends AppCompatActivity {
                 int start_;
                 int end_;
                 int step;
+
                 //若有文本框未编辑
                 if(TextUtils.isEmpty(teacher.getText())||TextUtils.isEmpty(course.getText())||TextUtils.isEmpty(room.getText())||TextUtils.isEmpty(dayOfWeek.getText())|| TextUtils.isEmpty(start.getText())||TextUtils.isEmpty(end.getText())||weeksnum.size()==0)
                 {
@@ -233,7 +238,21 @@ public class Activity_AddCourse extends AppCompatActivity {
                     if (end_ < start_) { builder2.show(); }
                     else if(dayOfWeek_<1||dayOfWeek_>7){builder3.show();}
                     else {
-                        MySubject item = new MySubject( course_, room_, teacher_, weeksnum, start_, step, dayOfWeek_, null);
+                        MySubject item = new MySubject( course_, room_, teacher_, weeksnum, start_, step, dayOfWeek_, null,0);
+
+                        mClassBoxData= Cache.with(v.getContext())
+                                .path(getCacheDir(v.getContext()))
+                                .getCache("classBox", String.class);
+
+                        List<MySubject> mySubjects = JSON.parseArray(mClassBoxData, MySubject.class);
+
+                        mySubjects.add(item);
+
+                        mClassBoxData=mySubjects.toString();
+
+                        Cache.with(v.getContext())
+                                .path(getCacheDir(v.getContext()))
+                                .saveCache("classBox", mClassBoxData);
 
                         Intent intent = new Intent();
                         intent.setClass(Activity_AddCourse.this,MainActivity.class);
@@ -243,5 +262,18 @@ public class Activity_AddCourse extends AppCompatActivity {
             }
         });
 
+    }
+    /*
+     * 获得缓存地址
+     * */
+    public String getCacheDir(Context context) {
+        String cachePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
+        }
+        return cachePath;
     }
 }

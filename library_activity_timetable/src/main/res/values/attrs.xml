@@ -76,4 +76,6 @@
     <attr name="navigation_bar_bg" format="reference|color" />
     <attr name="timetable_topbar_bg" format="reference|color" />
     <attr name="timetable_topbar_hint_textcolor" format="reference|color" />
+    <attr name="perweek_color" format="reference|color" />
+    <attr name="perweek_text_color" format="reference|color" />
 </resources>

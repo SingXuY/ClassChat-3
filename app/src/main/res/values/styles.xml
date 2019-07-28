@@ -7,8 +7,7 @@
         <item name="colorPrimaryDark">@android:color/holo_blue_light</item>
         <item name="colorAccent">@android:color/holo_blue_light</item>
     </style>
-    <!--  顶部导航
-     -->
+    <!--  顶部导航 -->
     <style name="top_nav">
         <item name="android:background">#fff</item>
         <item name="android:layout_width">match_parent</item>
@@ -34,39 +33,41 @@
 
     <!--夜晚-->
     <style name="dayTheme" parent="AppTheme">
-        <item name="timetable_bg">#fff</item>
-        <item name="nothisweek_bg">#fff</item>
-        <item name="thisweek_line">#fff</item>
-        <item name="thisweek_bg">#fff</item>
-        <item name="message_point_bg">#fff</item>
-        <item name="mon_textcolor">#fff</item>
-        <item name="dayOfWeek_textcolor">#fff</item>
-        <item name="date_textcolor">#fff</item>
-        <item name="changeweek_bt_bg">#fff</item>
-        <item name="changeweek_bt_text_bg">#fff</item>
-        <item name="weekview_thisweek_bg">#fff</item>
-        <item name="weekview_right_bg">#fff</item>
-        <item name="add_edit_view_bg">#fff</item>
+        <item name="timetable_bg">#8D91AA</item>
+        <item name="nothisweek_bg">#8D91AA</item>
+        <item name="thisweek_line">#FAD0C4</item>
+        <item name="thisweek_bg">#F9F5F1</item>
+        <item name="message_point_bg">#FFB5C4</item>
+        <item name="mon_textcolor">#DCE2EC</item>
+        <item name="dayOfWeek_textcolor">#DCE2EC</item>
+        <item name="date_textcolor">#DCE2EC</item>
+        <item name="changeweek_bt_bg">#BB8D91AA</item>
+        <item name="changeweek_bt_text_bg">#000</item>
+        <item name="weekview_thisweek_bg">#77ffffff</item>
+        <item name="weekview_right_bg">#CC8D91AA</item>
+        <item name="add_edit_view_bg">#E9F1F8</item>
         <item name="add_edit_bar_view_bg">#fff</item>
-        <item name="add_edit_all_textcolor">#fff</item>
-        <item name="add_bt_textcolor">#fff</item>
-        <item name="search_top_bg">#fff</item>
+        <item name="add_edit_all_textcolor">#000</item>
+        <item name="add_bt_textcolor">#1780C7</item>
+        <item name="search_top_bg">#E9F1F8</item>
         <item name="search_top_edit_bg">#fff</item>
-        <item name="search_top_edit_textcolor">#fff</item>
+        <item name="search_top_edit_textcolor">#000</item>
         <item name="search_bg">#fff</item>
         <item name="search_list_item_bg">#fff</item>
         <item name="search_list_item_textcolor">#000</item>
-        <item name="search_list_item_bt_bg">#000</item>
+        <item name="search_list_item_bt_bg">#AFEEEE</item>
         <item name="search_list_item_bt_textcolor">#fff</item>
-        <item name="details_textcolor_1">#fff</item>
+        <item name="details_textcolor_1">#000</item>
         <item name="details_textcolor_2">#fff</item>
         <item name="details_textcolor_3">#fff</item>
-        <item name="details_view_bg1">#fff</item>
-        <item name="details_view_bg">#fff</item>
-        <item name="details_view_border">#fff</item>
+        <item name="details_view_bg1">#8D91AA</item>
+        <item name="details_view_bg">#8E99C6</item>
+        <item name="details_view_border">#8E99C6</item>
         <item name="navigation_bar_bg">#fff</item>
         <item name="timetable_topbar_bg">#fff</item>
-        <item name="timetable_topbar_hint_textcolor">#fff</item>
+        <item name="timetable_topbar_hint_textcolor">#999999</item>
+        <item name="perweek_color">#8D91AA</item>
+        <item name="perweek_text_color">#AA000000</item>
     </style>
     <!--白天-->
     <style name="nightTheme" parent="AppTheme">
@@ -103,6 +104,8 @@
         <item name="navigation_bar_bg">#fff</item>
         <item name="timetable_topbar_bg">#fff</item>
         <item name="timetable_topbar_hint_textcolor">#999999</item>
+        <item name="perweek_color">#8D91AA</item>
+        <item name="perweek_text_color">#AA000000</item>
     </style>
 
 

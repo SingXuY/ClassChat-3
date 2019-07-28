@@ -17,12 +17,14 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="?attr/perweek_color">
         <TextView
             android:id="@+id/id_weektext"
             android:textSize="13sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:textColor="?attr/perweek_text_color"/>
 
         <com.example.library_activity_timetable.view.PerWeekView
             android:id="@+id/id_perweekview"

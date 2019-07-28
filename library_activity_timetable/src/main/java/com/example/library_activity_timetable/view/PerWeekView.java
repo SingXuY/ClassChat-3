@@ -172,7 +172,7 @@ public class PerWeekView extends View {
     private void initAttr(AttributeSet attrs) {
         int defRadius=ScreenUtils.dip2px(getContext(),2);
         TypedArray ta=getContext().obtainStyledAttributes(attrs, R.styleable.PerWeekView);
-        grayColor=ta.getColor(R.styleable.PerWeekView_gray_color, Color.rgb(207,219,219));
+        grayColor=ta.getColor(R.styleable.PerWeekView_gray_color,  Color.parseColor("#C7C6C4"));
         lightColor=ta.getColor(R.styleable.PerWeekView_light_color, Color.parseColor("#3FCAB8"));
         radius= (int) ta.getDimension(R.styleable.PerWeekView_radius,defRadius);
     }

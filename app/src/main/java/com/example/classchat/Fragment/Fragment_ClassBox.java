@@ -1,20 +1,19 @@
 package com.example.classchat.Fragment;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,40 +25,56 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.classchat.Activity.Activity_AddSearchCourse;
-import com.example.classchat.Activity.Activity_ClassDetailInformation;
-import com.example.classchat.Activity.MainActivity;
 import com.example.classchat.Object.MySubject;
 import com.example.classchat.R;
-import com.example.classchat.Util.SharedUtil;
-import com.example.classchat.Util.ThemeUIUtil;
-import com.example.classchat.model.SubjectRepertory;
+import com.example.classchat.Util.Util_NetUtil;
 import com.example.library_activity_timetable.Activity_TimetableView;
 import com.example.library_activity_timetable.listener.ISchedule;
 import com.example.library_activity_timetable.listener.IWeekView;
 import com.example.library_activity_timetable.model.Schedule;
 import com.example.library_activity_timetable.view.WeekView;
+import com.example.library_cache.Cache;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.alibaba.fastjson.JSON;
+
+import org.jetbrains.annotations.NotNull;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class Fragment_ClassBox extends Fragment implements OnClickListener {
-
-
 
     private static final String TAG = "Activity_Main_Timetable";
 
     //控件
     Activity_TimetableView mTimetableView;
     WeekView mWeekView;
-    private View view;
+
     ImageButton moreButton;
     LinearLayout layout;
     TextView titleTextView;
-    List<MySubject> mySubjects;
+    List<MySubject> mySubjects = new ArrayList<MySubject>();
+
+    Dialog coursedetail_dialog;
 
     //记录切换的周次，不一定是当前周
     int target = -1;
+
+    // 搞一个自己的变量
+    Fragment_ClassBox myContext = this;
+
+    //缓存
+    private String mClassBoxData = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return  inflater.inflate(R.layout.activity__main__timetable, container, false);
@@ -76,13 +91,103 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
                 showPopmenu();
             }
         });
-        view=getActivity().findViewById(R.id.activity_main_timetable);
-        mySubjects = SubjectRepertory.loadDefaultSubjects2();
-        mySubjects.addAll(SubjectRepertory.loadDefaultSubjects());
+
         titleTextView = (TextView)getActivity().findViewById(R.id.id_title);
         layout = (LinearLayout)getActivity().findViewById(R.id.id_layout);
         layout.setOnClickListener(this);
+
+        initClassBoxData();
+
         initTimetableView();
+    }
+
+    /**
+     * 模拟数据读取与存储
+     */
+    private void initClassBoxData(){
+        /*
+        * 判断缓存是否为空，空重新请求数据；不为空，则读缓存数据
+        * TODO
+        * */
+
+        /*
+        mClassBoxData= Cache.with(this.getActivity())
+                .path(getCacheDir(this.getActivity()))
+                .getCache("classBox", String.class);*/
+
+        /**
+         * 样例
+         * 由于不知道怎么分解list<int>，所以用stringweeklist（string类型）去代替，周数中间用英文,隔开！
+         * 上面注释掉的是获取缓存中的数据
+         * */
+        //获得数据后存入缓存
+        Cache.with(myContext.getActivity())
+                .path(getCacheDir(myContext.getActivity()))
+                .remove("classBox");
+
+        mClassBoxData="[{'id': '123', 'name': '计算机', 'teacher': 'ABC' , 'room': 'A1-101', 'stringweeklist': '5,6,7', 'start':'1', 'step':'4', 'day':'2','messagecount':'3'},{'id': '456', 'name': '网络工程', 'teacher': 'ABC' , 'room': 'A2-101', 'stringweeklist': '5,6,7', 'start':'1', 'step':'4', 'day':'4','messagecount':'3'}]";
+
+        Cache.with(myContext.getActivity())
+                .path(getCacheDir(myContext.getActivity()))
+                .saveCache("classBox", mClassBoxData);
+
+        if (mClassBoxData==null||mClassBoxData.length()<=0){
+            //TODO  mClassBoxData=接收的json字符串
+// 请求网络方法，获取数据
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("id", "这里应该有从MainActivity传来的studentid")
+                    .build();
+            Util_NetUtil.sendOKHTTPRequest("", requestBody,new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    //TODO  mClassBoxData=接收的json字符串
+
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    // 得到服务器返回的具体内容
+                    String responseData = response.body().string();
+                    mClassBoxData = responseData;
+                    // 转化为具体的对象列表
+                    List<String> jsonlist = JSON.parseArray(responseData, String.class);
+                    mySubjects.clear();
+                    for(String s : jsonlist) {
+                        MySubject mySubject = JSON.parseObject(s, MySubject.class);
+                        mySubjects.add(mySubject);
+                    }
+                    //获得数据后存入缓存
+                    Cache.with(myContext.getActivity())
+                            .path(getCacheDir(myContext.getActivity()))
+                            .remove("classBox");
+
+                    Cache.with(myContext.getActivity())
+                            .path(getCacheDir(myContext.getActivity()))
+                            .saveCache("classBox", mClassBoxData);
+                }
+            });
+        }
+
+        Log.v("here","here");
+
+        mySubjects.clear();
+        mySubjects=JSON.parseArray(mClassBoxData,MySubject.class);
+
+        Log.v("mySubjects",mySubjects.toString());
+
+    }
+    /*
+    * 获得缓存地址
+    * */
+    public String getCacheDir(Context context) {
+        String cachePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            cachePath = context.getExternalCacheDir().getPath();
+        } else {
+            cachePath = context.getCacheDir().getPath();
+        }
+        return cachePath;
     }
 
     /**
@@ -125,7 +230,9 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
                 .callback(new ISchedule.OnItemClickListener() {
                     @Override
                     public void onItemClick(View v, Schedule schedule) {
-                        display(schedule);
+
+                        showDialog(schedule);
+
                     }
                 })
                 .callback(new ISchedule.OnItemLongClickListener() {
@@ -199,24 +306,35 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
         builder.create().show();
     }
 
-    /**
-     *
-     * @param bean
-     */
-    protected void display(Schedule bean) {
-/*
-        Toast.makeText(getActivity(),
-                bean.getName(),
-                Toast.LENGTH_SHORT).show();
- */
-        Intent coursedetail=new Intent(getActivity(), Activity_ClassDetailInformation.class);
-        coursedetail.putExtra("coursename",bean.getName());
-        coursedetail.putExtra("courseday",bean.getDay());
-        coursedetail.putExtra("courseplace",bean.getRoom());
-        coursedetail.putExtra("coursestart",bean.getStart());
-        coursedetail.putExtra("coursestep",bean.getStep());
-        coursedetail.putExtra("courseteacher",bean.getTeacher());
-        startActivity(coursedetail);
+    /*
+    * 显示课程详情
+    * */
+    private TextView textViewforcoursename;
+    private TextView textViewforncoursezhou;
+    private TextView textViewforcoursetime;
+    private TextView textViewforcourseteacher;
+    private TextView textViewforcourseroom;
+
+    protected void showDialog(Schedule bean){
+        LayoutInflater inflater=LayoutInflater.from(this.getActivity());
+        View myview=inflater.inflate(R.layout.dialog_coursedetail,null);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this.getActivity());
+
+        textViewforcoursename=myview.findViewById(R.id.coursedetail_name);
+        textViewforncoursezhou=myview.findViewById(R.id.coursedetail_zhoutime);
+        textViewforcoursetime=myview.findViewById(R.id.coursedetail_daytime);
+        textViewforcourseteacher=myview.findViewById(R.id.coursedetail_teacher);
+        textViewforcourseroom=myview.findViewById(R.id.coursedetail_room);
+
+        textViewforcoursename.setText(bean.getName());
+        textViewforncoursezhou.setText("第"+bean.getWeekList()+"周");
+        textViewforcoursetime.setText("周"+bean.getDay()+"   "+"第"+bean.getStart()+"-"+(bean.getStart()+bean.getStep())+"节");
+        textViewforcourseroom.setText(bean.getRoom());
+        textViewforcourseteacher.setText(bean.getTeacher());
+
+        builder.setView(myview);
+        coursedetail_dialog=builder.create();
+        coursedetail_dialog.show();
 
     }
 
@@ -228,7 +346,6 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
         PopupMenu popup = new PopupMenu(this.getActivity(), moreButton);
         popup.getMenuInflater().inflate(R.menu.tabletime_menu, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_add_course:
@@ -246,9 +363,6 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
                         break;
                     case R.id.menu_hideweekend:
                         hideWeekends();
-                        break;
-                    case R.id.menu_changestyle:
-                        changstyle();
                         break;
                     default:
                         break;
@@ -275,7 +389,7 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
                 //否则，显示
                 if (mWeekView.isShowing()) {
                     mWeekView.isShow(false);
-                    titleTextView.setTextColor(getResources().getColor(R.color.app_black));
+                    titleTextView.setTextColor(getResources().getColor(R.color.app_gold));
                     int cur = mTimetableView.curWeek();
                     mTimetableView.onDateBuildListener()
                             .onUpdateDate(cur, cur);
@@ -363,35 +477,8 @@ public class Fragment_ClassBox extends Fragment implements OnClickListener {
     /**
      * 显示周末
      */
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void showWeekends() {
         mTimetableView.isShowWeekends(true).updateView();
-
-
-    }
-    private void changstyle(){
-        //我们先取这个根布局的 bitmap缓存
-        view.setDrawingCacheEnabled(true);
-        view.buildDrawingCache(true);
-        final Bitmap localBitmap=Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
-        if(SharedUtil.getShartData(getActivity(),"name").equals("night")){
-            SharedUtil.setShartData(getActivity(),"day");
-
-//                    recreate();
-            getActivity().setTheme(R.style.dayTheme);
-            getActivity().recreate();
-
-        }else{
-            SharedUtil.setShartData(getActivity(),"night");
-//                    recreate();
-            getActivity().setTheme(R.style.nightTheme);
-            getActivity().recreate();
-
-        }
-
     }
 
-
-    }
-
+}

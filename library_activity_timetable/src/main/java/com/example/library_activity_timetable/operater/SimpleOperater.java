@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.example.library_activity_timetable.Activity_TimetableView;
 import com.example.library_activity_timetable.R;
-
 import com.example.library_activity_timetable.listener.ISchedule;
 import com.example.library_activity_timetable.model.Schedule;
 import com.example.library_activity_timetable.model.ScheduleConfig;
@@ -139,15 +138,13 @@ public class SimpleOperater extends AbsOperater {
 
     /**
      * 构建课程项
-     *
-     * @param data    某一天的数据集合
      * @param subject 当前的课程数据
      * @param pre     上一个课程数据
      * @param i       构建的索引
      * @param curWeek 当前周
      * @return View
      */
-    private View newItemView(final List<Schedule> originData, final List<Schedule> data, final Schedule subject, Schedule pre, int i, int curWeek) {
+    private View newItemView( final Schedule subject, Schedule pre, int i, int curWeek) {
         //宽高
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = mView.itemHeight() * subject.getStep() + mView.marTop() * (subject.getStep() - 1);
@@ -173,9 +170,9 @@ public class SimpleOperater extends AbsOperater {
         FrameLayout layout = view.findViewById(R.id.id_item_framelayout);
         layout.setLayoutParams(lp);
 
-        boolean isThisWeek = ScheduleSupport.isThisWeek(subject, curWeek);;
+        boolean isThisWeek = ScheduleSupport.isThisWeek(subject, curWeek);
         TextView textView = (TextView) view.findViewById(R.id.id_course_name);
-        TextView countTextView = (TextView) view.findViewById(R.id.id_course_item_count);
+        TextView countTextView = (TextView) view.findViewById(R.id.id_course_messagecount);
         textView.setText(mView.onItemBuildListener().getItemText(subject, isThisWeek));
 
         countTextView.setText("");
@@ -184,18 +181,13 @@ public class SimpleOperater extends AbsOperater {
         if (isThisWeek) {
             textView.setTextColor(mView.itemTextColorWithThisWeek());
 
-            List<Schedule> clist = ScheduleSupport.findSubjects(subject, originData);
-            int count =0;
-            if(clist!=null){
-                for(int k=0;k<clist.size();k++){
-                    Schedule p=clist.get(k);
-                    if(p!=null&& ScheduleSupport.isThisWeek(p,curWeek)) count++;
-                }
-            }
+            int count =subject.getMessagecount();
             if (count > 1) {
                 countTextView.setVisibility(View.VISIBLE);
                 countTextView.setText(count + "");
             }
+
+
         } else {
             textView.setTextColor(Color.parseColor("#DCE2EC"));
             textView.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.xml_decoration_notthisweek_line));
@@ -242,7 +234,7 @@ public class SimpleOperater extends AbsOperater {
         }
         for (int i = 0; i < filter.size(); i++) {
             final Schedule subject = filter.get(i);
-            View view = newItemView(data,filter, subject, pre, i, curWeek);
+            View view = newItemView(subject, pre, i, curWeek);
             if (view != null) {
                 layout.addView(view);
                 pre = subject;
@@ -470,7 +462,7 @@ public class SimpleOperater extends AbsOperater {
         float perWidth=getPerWidth();
 
         int height = context.getResources().getDimensionPixelSize(R.dimen.headHeight);
-//		//日期栏
+        //日期栏
         ISchedule.OnDateBuildListener listener = mView.onDateBuildListener();
         listener.onInit(dateLayout, mView.dateAlpha());
         View[] views = mView.onDateBuildListener().getDateViews(inflater, mView.monthWidth(),perWidth, height);
